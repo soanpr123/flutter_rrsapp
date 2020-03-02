@@ -246,6 +246,7 @@ class RSSReaderState extends State<RSSReader> {
   subtitle(subTitle) {
     String s = subTitle;
     String tile = subTitle.toString().substring(s.indexOf("br"), s.length);
+    print(tile);
     String tiles = tile.substring(3);
     return Text(
       tiles,
