@@ -24,12 +24,6 @@ class _NewsDetailsState extends State<NewsDetails> {
           javascriptMode: JavascriptMode.unrestricted,
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Share next and last video / en el siguiente video ',
-        child: Icon(Icons.share),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

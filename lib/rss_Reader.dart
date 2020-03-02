@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:webfeed/domain/media/thumbnail.dart';
 import 'package:webfeed/webfeed.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:xml2json/xml2json.dart';
 import 'Home.dart';
 
 class RSSReader extends StatefulWidget {
@@ -44,9 +46,10 @@ class RSSReaderState extends State<RSSReader> {
   thumbnail(link) {
     String s = link;
     List<String> tags = s.replaceAll('<', ' ').replaceAll('>', ' ').split(' ');
+    print(tags);
     String srcTag = tags.where((s) => s.startsWith('src=')).first;
-    String url = srcTag.substring(5, srcTag.length - 1);
 
+    String url = srcTag.substring(5, srcTag.length - 1);
     return Padding(
       padding: EdgeInsets.only(left: 15.0),
       child: CachedNetworkImage(
@@ -129,9 +132,9 @@ class RSSReaderState extends State<RSSReader> {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.green,
-                  borderRadius:
-                  BorderRadius.only(bottomLeft: Radius.circular(15.0),bottomRight: Radius.circular(15.0)),
-
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(15.0),
+                    bottomRight: Radius.circular(15.0)),
               ),
               padding: EdgeInsets.all(5.0),
               child: Row(
@@ -179,9 +182,8 @@ class RSSReaderState extends State<RSSReader> {
             flex: 2,
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(10.0)),
+                color: Colors.grey,
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
 //                  boxShadow: [
 //                    BoxShadow(blurRadius: 5.0, color: Colors.black)
 //                  ]
@@ -194,19 +196,17 @@ class RSSReaderState extends State<RSSReader> {
 
                   return Container(
                     margin: EdgeInsets.only(
-                      bottom:10.0,
+                      bottom: 10.0,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10.0)),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         boxShadow: [
                           BoxShadow(blurRadius: 5.0, color: Colors.black)
-                        ]
-                    ),
+                        ]),
                     child: ListTile(
                       title: title(item.title),
-                      subtitle: subtitle(item.title),
+                      subtitle: subtitle(item.description),
                       leading: thumbnail(item.description),
                       trailing: rightIcon(),
                       contentPadding: EdgeInsets.all(2.0),
@@ -236,7 +236,7 @@ class RSSReaderState extends State<RSSReader> {
     return Text(
       title,
       style: TextStyle(
-          fontSize: 18.0, fontWeight: FontWeight.w500 , color: Colors.black),
+          fontSize: 18.0, fontWeight: FontWeight.w500, color: Colors.black),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
@@ -244,9 +244,13 @@ class RSSReaderState extends State<RSSReader> {
 
   // Method that returns the Text Widget for the subtitle of our RSS data.
   subtitle(subTitle) {
+    String s = subTitle;
+    String tile = subTitle.toString().substring(s.indexOf("br"), s.length);
+    String tiles = tile.substring(3);
     return Text(
-      subTitle,
-      style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300, color: Colors.grey),
+      tiles,
+      style: TextStyle(
+          fontSize: 15.0, fontWeight: FontWeight.w300, color: Colors.grey),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
@@ -266,17 +270,14 @@ class RSSReaderState extends State<RSSReader> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(_title),
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: Text(_title),
           ),
-          child:body(),
-        )
-      ),
+          body: Container(
+            decoration: BoxDecoration(color: Colors.grey),
+            child: body(),
+          )),
     );
   }
 }
